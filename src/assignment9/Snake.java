@@ -11,7 +11,8 @@ public class Snake {
 	private double deltaY;
 	
 	public Snake() {
-		//FIXME - set up the segments instance variable
+	    segments = new LinkedList<>();
+	    segments.add(new BodySegment(0.5, 0.5, SEGMENT_SIZE)); // Start snake in the center
 		deltaX = 0;
 		deltaY = 0;
 	}
@@ -37,14 +38,25 @@ public class Snake {
 	 * based on the current direction of travel
 	 */
 	public void move() {
-		//FIXME
+		  double newX = segments.getFirst().getX() + deltaX;
+	      double newY = segments.getFirst().getY() + deltaY;
+
+	        // Add a new head at the new position
+	        segments.addFirst(new BodySegment(newX, newY, SEGMENT_SIZE));
+
+	        if (segments.size() > 1) {
+	            segments.removeLast();
+	        }
 	}
 	
 	/**
 	 * Draws the snake by drawing each segment
 	 */
 	public void draw() {
-		//FIXME
+	
+		        for (BodySegment segment : segments) {
+		            segment.draw();
+		        }
 	}
 	
 	/**
@@ -53,8 +65,19 @@ public class Snake {
 	 * @return true if the snake successfully ate the food
 	 */
 	public boolean eatFood(Food f) {
-		//FIXME
-		return false;
+		 double headX = segments.getFirst().getX();
+	        double headY = segments.getFirst().getY();
+	        double foodX = f.getX();
+	        double foodY = f.getY();
+	        
+	        // Check if the head overlaps the food
+	        if (Math.hypot(headX - foodX, headY - foodY) < SEGMENT_SIZE + Food.FOOD_SIZE) {
+	            // Grow the snake
+	            segments.addFirst(new BodySegment(headX, headY, SEGMENT_SIZE));
+	            return true;
+	        }
+
+	        return false;
 	}
 	
 	/**
@@ -62,7 +85,10 @@ public class Snake {
 	 * @return whether or not the head is in the bounds of the window
 	 */
 	public boolean isInbounds() {
-		//FIXME
-		return true;
+		 double headX = segments.getFirst().getX();
+	     double headY = segments.getFirst().getY();
+	     return headX >= 0 && headX <= 1 && headY >= 0 && headY <= 1;
 	}
+
+	
 }
